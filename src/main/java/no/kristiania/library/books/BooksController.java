@@ -45,4 +45,8 @@ public class BooksController {
         author.setFullName(authorName);
         authorRepository.save(author);
     }
- }
+
+    public void addBookWithExistingAuthor(String title, Long authorId) {
+
+    }
+}

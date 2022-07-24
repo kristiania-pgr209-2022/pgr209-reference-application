@@ -35,4 +35,16 @@ class BooksControllerTest {
         assertThat(authorsController.getAuthorsOptions()).contains(authorName);
     }
 
+    @Test
+    void shouldUseExistingAuthorInformation() {
+        AuthorRepository authorRepository = new AuthorRepository(dbContext);
+        Author author = new Author();
+        author.setFullName("Test Persson");
+        authorRepository.save(author);
+
+        String bookTitle = "Book title";
+        controller.addBookWithExistingAuthor(bookTitle, author.getId());
+        assertThat(controller.getBooks())
+                .contains(bookTitle + " by " + author.getFullName());
+    }
 }
