@@ -29,8 +29,8 @@ public class LibraryServer {
             @Override
             public void contextInitialized(ServletContextEvent event) {
                 event.getServletContext()
-                        .addServlet("libraryServlet", new LibraryServlet())
-                        .addMapping("/library");
+                        .addServlet("libraryApiServlet", new LibraryApiServlet())
+                        .addMapping("/api/*");
             }
         });
         return webapp;
