@@ -17,7 +17,11 @@ public class BookRepository {
     }
 
     public Stream<Book> streamBooks() {
-        return books.stream();
+        return table.query().stream(row -> {
+            Book book = new Book();
+            book.setTitle(row.getString("title"));
+            return book;
+        });
     }
 
     public void insertBook(Book book) {
