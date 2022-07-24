@@ -1,6 +1,8 @@
 package no.kristiania.library;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +16,7 @@ public class LibraryServer {
     }
 
     private void start() throws Exception {
+        server.setHandler(new WebAppContext(Resource.newClassPathResource("webapp"), "/"));
         server.start();
         logger.info("Started {} at {}", this.getClass().getSimpleName(), server.getURI());
     }
