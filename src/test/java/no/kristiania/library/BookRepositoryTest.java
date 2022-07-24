@@ -7,7 +7,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BookRepositoryTest {
 
-    private final BookRepository bookRepository = new BookRepository();
+    private final BookRepository bookRepository;
+
+    BookRepositoryTest() {
+        bookRepository = new BookRepository(null);
+    }
 
     @Test
     void shouldListInsertedBooks() {

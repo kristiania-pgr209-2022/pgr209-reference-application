@@ -5,12 +5,14 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import org.actioncontroller.jakarta.ContentServlet;
 import org.actioncontroller.jakarta.ApiJakartaServlet;
+import org.fluentjdbc.DbContext;
 
 import java.util.List;
 
 class LibraryWebApp implements ServletContextListener {
 
-    private final BooksController booksController = new BooksController();
+    private final DbContext dbContext = new DbContext();
+    private final BooksController booksController = new BooksController(dbContext);
 
     @Override
     public void contextInitialized(ServletContextEvent event) {

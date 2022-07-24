@@ -5,12 +5,17 @@ import org.actioncontroller.actions.POST;
 import org.actioncontroller.values.ContentBody;
 import org.actioncontroller.values.RequestParam;
 import org.actioncontroller.values.SendRedirect;
+import org.fluentjdbc.DbContext;
 
 import java.util.stream.Collectors;
 
 public class BooksController {
 
-    private final BookRepository bookRepository = new BookRepository();
+    private final BookRepository bookRepository;
+
+    public BooksController(DbContext dbContext) {
+        bookRepository = new BookRepository(dbContext);
+    }
 
     @GET("/books")
     @ContentBody
