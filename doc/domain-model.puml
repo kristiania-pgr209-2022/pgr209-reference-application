@@ -1,0 +1,157 @@
+@startuml
+
+title "Library v1 a"
+
+class Book {
+    id
+    title
+    publicationDate
+}
+
+class Author {
+    id
+    fullName
+    bio
+}
+
+Book "1..*" - "*" Author
+
+@enduml
+@startuml
+
+title "Library v1 b"
+
+class Book {
+    id
+    title
+    publicationDate
+}
+
+class Library {
+    id
+    name
+    address
+    city
+}
+
+class BookCopy {
+    id
+}
+
+Book "1" - "*" BookCopy
+BookCopy "*" - "*" Library
+
+@enduml
+@startuml
+title "Library v2 a"
+class Book {
+    id
+    title
+    publicationDate
+}
+
+class Author {
+    id
+    fullName
+    bio
+}
+
+Book "1..*" -- "*" Author
+
+class Library {
+    id
+    name
+    address
+    city
+}
+
+class BookCopy {
+    id
+}
+
+Book "1" - "*" BookCopy
+BookCopy "*" - "*" Library
+@enduml
+@startuml
+title "Library v2 b"
+
+class Book {
+    id
+    title
+    publicationDate
+}
+
+class Library {
+    id
+    name
+    address
+    city
+}
+
+class BookCopy {
+    id
+}
+
+class Reader {
+    id
+    fullName
+}
+
+class Loan {
+    id
+    start: date
+    end: date?
+}
+
+Book "1" - "*" BookCopy
+BookCopy "*" - "*" Library
+
+BookCopy "1" -- "*" Loan
+Loan "*" - "1" Reader
+
+@enduml
+@startuml
+title "Library v3"
+
+class Book {
+    id
+    title
+    publicationDate
+}
+
+class Library {
+    id
+    name
+    address
+    city
+}
+
+class BookCopy {
+    id
+}
+
+class Reader {
+    id
+    fullName
+}
+
+class Loan {
+    id
+    start: date
+    end: date?
+}
+
+Book "1" - "*" BookCopy
+BookCopy "*" - "*" Library
+
+BookCopy "1" -- "*" Loan
+Loan "*" - "1" Reader
+
+class Author {
+    id
+    fullName
+    bio
+}
+
+Book "1..*" -- "*" Author
+@enduml
