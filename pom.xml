@@ -10,13 +10,18 @@
     <dependencies>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
+            <artifactId>jetty-servlet</artifactId>
             <version>11.0.9</version>
         </dependency>
         <dependency>
             <groupId>org.logevents</groupId>
             <artifactId>logevents</artifactId>
             <version>0.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jhannes</groupId>
+            <artifactId>action-controller</artifactId>
+            <version>0.0.39</version>
         </dependency>
     </dependencies>
     <properties>
