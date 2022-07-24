@@ -15,12 +15,26 @@ class AuthorRepositoryTest {
     }
 
     @Test
+    void shouldReturnSavedAuthor() {
+        Author author = sampleAuthor();
+        repository.save(author);
+        assertThat(repository.retrieve(author.getId()))
+                .usingRecursiveComparison()
+                .isEqualTo(author);
+    }
+
+    @Test
     void shouldListSavedAuthors() {
-        Author author = new Author();
-        author.setFullName("Test Persson");
+        Author author = sampleAuthor();
         repository.save(author);
         assertThat(repository.streamAll())
                 .extracting(Author::getFullName)
                 .contains(author.getFullName());
+    }
+
+    private Author sampleAuthor() {
+        Author author = new Author();
+        author.setFullName("Test Persson");
+        return author;
     }
 }
