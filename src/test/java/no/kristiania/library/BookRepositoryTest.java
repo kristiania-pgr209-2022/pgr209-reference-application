@@ -1,6 +1,8 @@
 package no.kristiania.library;
 
 
+import no.kristiania.library.infrastructure.TestDbContext;
+import org.fluentjdbc.DbContext;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,8 +11,8 @@ class BookRepositoryTest {
 
     private final BookRepository bookRepository;
 
-    BookRepositoryTest() {
-        bookRepository = new BookRepository(null);
+    BookRepositoryTest(@TestDbContext DbContext dbContext) {
+        bookRepository = new BookRepository(dbContext);
     }
 
     @Test
