@@ -28,4 +28,8 @@ public class AuthorRepository {
             return author;
         });
     }
+
+    public Author retrieve(Long authorId) {
+        return null;
+    }
 }

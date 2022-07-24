@@ -46,7 +46,14 @@ public class BooksController {
         authorRepository.save(author);
     }
 
+    @POST("/books?authorId")
+    @SendRedirect("/books/")
     public void addBookWithExistingAuthor(String title, Long authorId) {
+        Author author = authorRepository.retrieve(authorId);
 
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author.getFullName());
+        bookRepository.insertBook(book);
     }
 }
