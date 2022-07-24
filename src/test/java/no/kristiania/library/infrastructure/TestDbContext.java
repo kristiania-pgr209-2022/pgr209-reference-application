@@ -2,6 +2,7 @@ package no.kristiania.library.infrastructure;
 
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextConnection;
+import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -38,14 +39,14 @@ public @interface TestDbContext {
 
 
         @Override
-        public void afterEach(ExtensionContext context) throws Exception {
+        public void afterEach(ExtensionContext context) {
             context.getStore(GLOBAL)
                     .get(DbContextConnection.class, DbContextConnection.class)
                     .close();
         }
 
         @Override
-        public void beforeEach(ExtensionContext context) throws Exception {
+        public void beforeEach(ExtensionContext context) {
             var connection = context.getStore(GLOBAL)
                     .get(DbContext.class, DbContext.class)
                     .startConnection(getDataSource());
@@ -54,7 +55,9 @@ public @interface TestDbContext {
 
         private DataSource getDataSource() {
             JdbcDataSource dataSource = new JdbcDataSource();
-            dataSource.setURL("jdbc:h2:mem:test");
+            dataSource.setURL("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
+            Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+            flyway.migrate();
             return dataSource;
         }
     }
