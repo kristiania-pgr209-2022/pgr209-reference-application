@@ -5,15 +5,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class LibraryApiServlet extends HttpServlet {
+
+    private final BookRepository bookRepository = new BookRepository();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if ("/books".equals(req.getPathInfo())) {
             resp.setContentType("text/html");
-            String books = List.of("Book1", "Book2").stream().map(b -> "<li>" + b + "</li>")
+            String books = bookRepository.streamAllBooks().map(b -> "<li>" + b + "</li>")
                     .collect(Collectors.joining("\n"));
             resp.getWriter().write("<ul class='bookList'>" + books + "</ul>");
         } else {
