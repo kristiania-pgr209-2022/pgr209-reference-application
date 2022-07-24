@@ -21,6 +21,10 @@
     <div>
         <label>
             Author:
+            <select name="authorId" id="authorId">
+                <option value="">(new)</option>
+                <optgroup id="authors"></optgroup>
+            </select>
             <input type="text" name="author"/>
         </label>
     </div>
@@ -32,5 +36,8 @@
     fetch("/api/books").then(res => res.text()).then(html => {
         document.getElementById("books").innerHTML = html;
     });
+    fetch("/api/authors/options").then(res => res.text()).then(html => {
+        document.getElementById("authors").innerHTML = html;
+    })
 </script>
 </html>

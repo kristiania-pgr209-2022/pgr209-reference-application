@@ -7,6 +7,8 @@ import no.kristiania.library.infrastructure.TestDbContext;
 import org.fluentjdbc.DbContext;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BooksControllerTest {
@@ -23,14 +25,14 @@ class BooksControllerTest {
     void shouldReturnSavedBooks() {
         String authorName = "Test Persson";
         String title = "The Title of the Book";
-        controller.addBook(title, authorName);
+        controller.addBook(title, Optional.of(authorName), Optional.empty());
         assertThat(controller.getBooks()).contains(title + " by " + authorName);
     }
 
     @Test
     void shouldCreateAuthorForNewBook() {
         String authorName = "Test Persson";
-        controller.addBook("Irrelevant", authorName);
+        controller.addBook("Irrelevant", Optional.of(authorName), Optional.empty());
         AuthorsController authorsController = new AuthorsController(dbContext);
         assertThat(authorsController.getAuthorsOptions()).contains(authorName);
     }
@@ -43,7 +45,7 @@ class BooksControllerTest {
         authorRepository.save(author);
 
         String bookTitle = "Book title";
-        controller.addBookWithExistingAuthor(bookTitle, author.getId());
+        controller.addBook(bookTitle, Optional.empty(), Optional.of(author.getId()));
         assertThat(controller.getBooks())
                 .contains(bookTitle + " by " + author.getFullName());
     }

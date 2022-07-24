@@ -4,6 +4,7 @@ import jakarta.servlet.DispatcherType;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import no.kristiania.library.authors.AuthorsController;
 import no.kristiania.library.books.BooksController;
 import org.actioncontroller.jakarta.ContentServlet;
 import org.actioncontroller.jakarta.ApiJakartaServlet;
@@ -19,7 +20,8 @@ class LibraryWebApp implements ServletContextListener {
     private final LibraryFilter libraryFilter = new LibraryFilter(dbContext);
     private final ContentServlet contentServlet = new ContentServlet("/webapp");
     private final BooksController booksController = new BooksController(dbContext);
-    private final ApiJakartaServlet apiServlet = new ApiJakartaServlet(List.of(booksController));
+    private final AuthorsController authorsController = new AuthorsController(dbContext);
+    private final ApiJakartaServlet apiServlet = new ApiJakartaServlet(List.of(booksController, authorsController));
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
