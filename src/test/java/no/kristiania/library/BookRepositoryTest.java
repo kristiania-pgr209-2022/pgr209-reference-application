@@ -11,13 +11,18 @@ class BookRepositoryTest {
 
     @Test
     void shouldListInsertedBooks() {
-        String title = "some title";
-        Book book = new Book();
-        book.setTitle(title);
-        book.setAuthor("some author");
+        Book book = sampleBook();
         bookRepository.insertBook(book);
-        assertThat(bookRepository.streamBooks().map(Book::getTitle))
-                .contains(title);
+        assertThat(bookRepository.streamBooks())
+                .extracting(Book::getTitle)
+                .contains(book.getTitle());
+    }
+
+    private Book sampleBook() {
+        Book book = new Book();
+        book.setTitle("some title");
+        book.setAuthor("some author");
+        return book;
     }
 
 }
