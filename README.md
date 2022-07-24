@@ -19,7 +19,7 @@ Example library management system where administrative users can register books 
 
 ### Simple model: Each book has one or more authors
 
-![](./doc/domain-model-Library-v1_a.png)
+![](./doc/domain-model-Library_v1_a.png)
 
 ### Simple model: Each book is in one or more libraries
 
