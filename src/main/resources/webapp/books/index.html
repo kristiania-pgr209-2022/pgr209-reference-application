@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Books | Kristiania Library</title>
+</head>
+<body>
+<header>Books</header>
+<h2>Existing books</h2>
+<div id="books"></div>
+
+<h2>Add book</h2>
+
+<form action="/api/books" method="post">
+    <div>
+        <label>
+            Title:
+            <input type="text" name="title"/>
+        </label>
+    </div>
+    <div>
+        <label>
+            Author:
+            <input type="text" name="author"/>
+        </label>
+    </div>
+    <button>Submit</button>
+</form>
+
+</body>
+<script>
+    fetch("/api/books").then(res => res.text()).then(html => {
+        document.getElementById("books").innerHTML = html;
+    });
+</script>
+</html>
