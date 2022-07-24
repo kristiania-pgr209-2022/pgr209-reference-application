@@ -1,5 +1,7 @@
 package no.kristiania.library.books;
 
+import no.kristiania.library.authors.Author;
+import no.kristiania.library.authors.AuthorRepository;
 import no.kristiania.library.authors.AuthorsController;
 import no.kristiania.library.infrastructure.TestDbContext;
 import org.fluentjdbc.DbContext;
@@ -22,7 +24,7 @@ class BooksControllerTest {
         String authorName = "Test Persson";
         String title = "The Title of the Book";
         controller.addBook(title, authorName);
-        assertThat(controller.getBooks()).contains(title);
+        assertThat(controller.getBooks()).contains(title + " by " + authorName);
     }
 
     @Test

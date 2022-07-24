@@ -25,7 +25,7 @@ public class BooksController {
     @ContentBody
     public String getBooks() {
         String books = bookRepository.streamBooks()
-                .map(b -> "<li>" + b.getTitle() + "</li>")
+                .map(b -> "<li>" + b.getTitle() + " by " + b.getAuthor() + "</li>")
                 .collect(Collectors.joining("\n"));
         return "<ul class='bookList'>" + books + "</ul>";
     }
