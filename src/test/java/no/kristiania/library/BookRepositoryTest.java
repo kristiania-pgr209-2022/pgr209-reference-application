@@ -12,8 +12,11 @@ class BookRepositoryTest {
     @Test
     void shouldListInsertedBooks() {
         String title = "some title";
-        bookRepository.insertBook(title, "some author");
-        assertThat(bookRepository.streamBookTitles())
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor("some author");
+        bookRepository.insertBook(book);
+        assertThat(bookRepository.streamBooks().map(Book::getTitle))
                 .contains(title);
     }
 

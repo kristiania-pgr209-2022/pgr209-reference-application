@@ -15,7 +15,9 @@ public class BooksController {
     @GET("/books")
     @ContentBody
     public String getBooks() {
-        String books = bookRepository.streamBookTitles().map(b -> "<li>" + b + "</li>")
+        String books = bookRepository.streamBooks()
+                .map(Book::getTitle)
+                .map(b -> "<li>" + b + "</li>")
                 .collect(Collectors.joining("\n"));
         return "<ul class='bookList'>" + books + "</ul>";
     }
@@ -26,6 +28,9 @@ public class BooksController {
             @RequestParam("title") String title,
             @RequestParam("author") String author
     ) {
-        bookRepository.insertBook(title, author);
+        Book book = new Book();
+        book.setTitle(title);
+        book.setAuthor(author);
+        bookRepository.insertBook(book);
     }
  }
