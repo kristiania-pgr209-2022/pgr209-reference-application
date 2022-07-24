@@ -1,0 +1,6 @@
+# Copy to logevents.properties and edit locally to customize
+
+logevents.status=INFO
+
+root=WARN console
+logger.no.kristiania=INFO
