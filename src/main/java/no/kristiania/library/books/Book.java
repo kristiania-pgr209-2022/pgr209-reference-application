@@ -1,4 +1,4 @@
-package no.kristiania.library;
+package no.kristiania.library.books;
 
 public class Book {
     private String title;

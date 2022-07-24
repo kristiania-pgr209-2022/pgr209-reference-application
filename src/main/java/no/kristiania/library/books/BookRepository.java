@@ -1,4 +1,4 @@
-package no.kristiania.library;
+package no.kristiania.library.books;
 
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextTable;
