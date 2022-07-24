@@ -1,12 +1,16 @@
 package no.kristiania.library;
 
-public class LibraryServer {
+import org.eclipse.jetty.server.Server;
 
-    public static void main(String[] args) {
+public class LibraryServer {
+    private final Server server = new Server(0);
+
+    public static void main(String[] args) throws Exception {
         new LibraryServer().start();
     }
 
-    private void start() {
-        System.out.println("Hello LibraryServer");
+    private void start() throws Exception {
+        server.start();
+        System.out.println("Started LibraryServer at " + server.getURI());
     }
 }
