@@ -1,5 +1,7 @@
 package no.kristiania.library;
 
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -16,8 +18,21 @@ public class LibraryServer {
     }
 
     private void start() throws Exception {
-        server.setHandler(new WebAppContext(Resource.newClassPathResource("webapp"), "/"));
+        server.setHandler(createWebApp());
         server.start();
         logger.info("Started {} at {}", this.getClass().getSimpleName(), server.getURI());
+    }
+
+    private WebAppContext createWebApp() {
+        WebAppContext webapp = new WebAppContext(Resource.newClassPathResource("webapp"), "/");
+        webapp.addEventListener(new ServletContextListener() {
+            @Override
+            public void contextInitialized(ServletContextEvent event) {
+                event.getServletContext()
+                        .addServlet("libraryServlet", new LibraryServlet())
+                        .addMapping("/library");
+            }
+        });
+        return webapp;
     }
 }
