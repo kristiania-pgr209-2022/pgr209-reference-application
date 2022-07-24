@@ -5,9 +5,10 @@ import no.kristiania.library.infrastructure.TestDbContext;
 import org.fluentjdbc.DbContext;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class AuthorRepositoryTest {
     private final AuthorRepository repository;
-
 
     AuthorRepositoryTest(@TestDbContext DbContext dbContext) {
         repository = new AuthorRepository(dbContext);
