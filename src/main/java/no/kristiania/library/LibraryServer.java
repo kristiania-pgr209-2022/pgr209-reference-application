@@ -1,5 +1,6 @@
 package no.kristiania.library;
 
+import no.kristiania.library.infrastructure.DataSourceConfig;
 import org.actioncontroller.config.ConfigObserver;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -15,7 +16,7 @@ public class LibraryServer {
 
     private final Server server = new Server();
     private final ServerConnector connector = new ServerConnector(server);
-    private final LibraryWebApp listener = new LibraryWebApp();
+    private final LibraryWebApp application = new LibraryWebApp();
 
     public static void main(String[] args) throws Exception {
         new LibraryServer().start();
@@ -23,7 +24,9 @@ public class LibraryServer {
 
     private void start() throws Exception {
         new ConfigObserver("library")
-                .onInetSocketAddress("http.port", 9080, this::setHttpPort);
+                .onInetSocketAddress("http.port", 9080, this::setHttpPort)
+                .onPrefixedValue("dataSource", new DataSourceConfig(), application::setDataSource)
+        ;
         server.setHandler(createWebApp());
         server.start();
     }
@@ -38,7 +41,7 @@ public class LibraryServer {
     private Handler createWebApp() {
         ServletContextHandler webapp = new ServletContextHandler();
         webapp.setContextPath("/");
-        webapp.addEventListener(listener);
+        webapp.addEventListener(application);
         return webapp;
     }
 
