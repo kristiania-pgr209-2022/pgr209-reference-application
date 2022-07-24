@@ -2,6 +2,8 @@ package no.kristiania.library.authors;
 
 import org.fluentjdbc.DbContext;
 
+import java.util.stream.Collectors;
+
 public class AuthorsController {
     private final AuthorRepository repository;
 
@@ -10,6 +12,8 @@ public class AuthorsController {
     }
 
     public String getAuthorsOptions() {
-        return null;
+        return repository.streamAll()
+                .map(a -> "<option value='" + a.getId() + "'>" + a.getFullName() + "</option>")
+                .collect(Collectors.joining("\n"));
     }
 }

@@ -3,7 +3,6 @@ package no.kristiania.library.books;
 import no.kristiania.library.authors.AuthorsController;
 import no.kristiania.library.infrastructure.TestDbContext;
 import org.fluentjdbc.DbContext;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +26,6 @@ class BooksControllerTest {
     }
 
     @Test
-    @Disabled("waiting for implementation of AuthorRepository")
     void shouldCreateAuthorForNewBook() {
         String authorName = "Test Persson";
         controller.addBook("Irrelevant", authorName);
