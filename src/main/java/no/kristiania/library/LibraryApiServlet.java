@@ -1,5 +1,6 @@
 package no.kristiania.library;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +19,18 @@ public class LibraryApiServlet extends HttpServlet {
             String books = bookRepository.streamAllBooks().map(b -> "<li>" + b + "</li>")
                     .collect(Collectors.joining("\n"));
             resp.getWriter().write("<ul class='bookList'>" + books + "</ul>");
+        } else {
+            resp.getWriter().write("Unknown action " + req.getPathInfo());
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if ("/books".equals(req.getPathInfo())) {
+            String title = req.getParameter("title");
+            String author = req.getParameter("author");
+            bookRepository.insertBook(title, author);
+            resp.sendRedirect("/books");
         } else {
             resp.getWriter().write("Unknown action " + req.getPathInfo());
         }

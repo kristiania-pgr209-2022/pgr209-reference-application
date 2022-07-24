@@ -10,4 +10,8 @@ public class BookRepository {
     public Stream<String> streamAllBooks() {
         return books.stream();
     }
+
+    public void insertBook(String title, String author) {
+        books.add(title);
+    }
 }
