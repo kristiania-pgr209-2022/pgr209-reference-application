@@ -33,7 +33,7 @@ class BookRepositoryTest {
                 .contains(book.getTitle());
     }
 
-    private Book sampleBook() {
+    public static Book sampleBook() {
         Book book = new Book();
         book.setTitle("some title");
         book.setAuthor("some author");

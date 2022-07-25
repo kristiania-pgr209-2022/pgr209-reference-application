@@ -26,7 +26,17 @@ class BooksControllerTest {
         String authorName = "Test Persson";
         String title = "The Title of the Book";
         controller.addBook(title, Optional.empty(), Optional.of(authorName));
-        assertThat(controller.getBooks()).contains(title + " by " + authorName);
+        assertThat(controller.getBooks()).contains(title + "</a> by " + authorName);
+    }
+
+    @Test
+    public void shouldUpdateBookTitle() {
+        Book book = BookRepositoryTest.sampleBook();
+        BookRepository repository = new BookRepository(dbContext);
+        repository.insertBook(book);
+        controller.updateBook(book.getId(), "Updated title");
+        assertThat(controller.getBook(book.getId(), Optional.empty()))
+                .contains(">Updated title<");
     }
 
     @Test
@@ -47,6 +57,6 @@ class BooksControllerTest {
         String bookTitle = "Book title";
         controller.addBook(bookTitle, Optional.of(author.getId()), Optional.empty());
         assertThat(controller.getBooks())
-                .contains(bookTitle + " by " + author.getFullName());
+                .contains(bookTitle + "</a> by " + author.getFullName());
     }
 }

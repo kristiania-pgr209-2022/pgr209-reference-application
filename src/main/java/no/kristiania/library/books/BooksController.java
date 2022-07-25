@@ -6,6 +6,7 @@ import org.actioncontroller.actions.GET;
 import org.actioncontroller.actions.POST;
 import org.actioncontroller.exceptions.HttpRequestException;
 import org.actioncontroller.values.ContentBody;
+import org.actioncontroller.values.PathParam;
 import org.actioncontroller.values.RequestParam;
 import org.actioncontroller.values.SendRedirect;
 import org.fluentjdbc.DbContext;
@@ -37,9 +38,22 @@ public class BooksController {
 
     @GET("/books/book")
     @ContentBody
-    public String getBook(@RequestParam("id") long bookId) {
+    public String getBook(@RequestParam("id") long bookId, @RequestParam("action") Optional<String> action) {
         Book book = bookRepository.retrieve(bookId);
-        return "Book with id " + book.getTitle();
+        if (action.filter(s -> s.equals("edit")).isPresent()) {
+            return ("""
+                <h2>Edit %s</h2>
+                <form method='POST' action='/api/books/%d'>
+                    <div><input name="title" value="%s" />
+                    <div><button>Submit</button></div>
+                </form>
+                """).formatted(book.getTitle(), book.getId(), book.getTitle());
+        }
+        return ("""
+                <h2>%s</h2>
+                <div>by %s</div>
+                <div><a href='/books/book.html?id=%d&action=edit'>Edit</a></div>
+                """).formatted(book.getTitle(), book.getAuthor(), book.getId());
     }
 
     @POST("/books")
@@ -71,5 +85,13 @@ public class BooksController {
         } else {
             throw new HttpRequestException("Missing authorId");
         }
+    }
+
+    @POST("/books/{bookId}")
+    @SendRedirect("/books/")
+    public void updateBook(@PathParam("bookId") long id, @RequestParam("title") String title) {
+        Book book = bookRepository.retrieve(id);
+        book.setTitle(title);
+        bookRepository.insertBook(book);
     }
 }
