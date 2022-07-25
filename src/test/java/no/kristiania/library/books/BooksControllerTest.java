@@ -25,14 +25,14 @@ class BooksControllerTest {
     void shouldReturnSavedBooks() {
         String authorName = "Test Persson";
         String title = "The Title of the Book";
-        controller.addBook(title, Optional.of(authorName), Optional.empty());
+        controller.addBook(title, Optional.empty(), Optional.of(authorName));
         assertThat(controller.getBooks()).contains(title + " by " + authorName);
     }
 
     @Test
     void shouldCreateAuthorForNewBook() {
         String authorName = "Test Persson";
-        controller.addBook("Irrelevant", Optional.of(authorName), Optional.empty());
+        controller.addBook("Irrelevant", Optional.empty(), Optional.of(authorName));
         AuthorsController authorsController = new AuthorsController(dbContext);
         assertThat(authorsController.getAuthorsOptions()).contains(authorName);
     }
@@ -45,7 +45,7 @@ class BooksControllerTest {
         authorRepository.save(author);
 
         String bookTitle = "Book title";
-        controller.addBook(bookTitle, Optional.empty(), Optional.of(author.getId()));
+        controller.addBook(bookTitle, Optional.of(author.getId()), Optional.empty());
         assertThat(controller.getBooks())
                 .contains(bookTitle + " by " + author.getFullName());
     }

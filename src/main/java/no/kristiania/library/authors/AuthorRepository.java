@@ -1,7 +1,6 @@
 package no.kristiania.library.authors;
 
 import org.fluentjdbc.DatabaseRow;
-import org.fluentjdbc.DatabaseSaveResult;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextTable;
 

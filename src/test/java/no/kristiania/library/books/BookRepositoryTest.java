@@ -1,8 +1,6 @@
-package no.kristiania.library;
+package no.kristiania.library.books;
 
 
-import no.kristiania.library.books.Book;
-import no.kristiania.library.books.BookRepository;
 import no.kristiania.library.infrastructure.TestDbContext;
 import org.fluentjdbc.DbContext;
 import org.junit.jupiter.api.Test;
