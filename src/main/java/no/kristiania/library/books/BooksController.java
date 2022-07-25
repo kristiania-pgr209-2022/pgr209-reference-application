@@ -35,6 +35,13 @@ public class BooksController {
         return "<ul class='bookList'>" + books + "</ul>";
     }
 
+    @GET("/books/book")
+    @ContentBody
+    public String getBook(@RequestParam("id") long bookId) {
+        Book book = bookRepository.retrieve(bookId);
+        return "Book with id " + book.getTitle();
+    }
+
     @POST("/books")
     @SendRedirect("/books/")
     public void addBook(

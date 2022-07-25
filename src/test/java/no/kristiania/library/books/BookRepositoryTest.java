@@ -16,6 +16,15 @@ class BookRepositoryTest {
     }
 
     @Test
+    void shouldRetrieveSavedBook() {
+        Book book = sampleBook();
+        bookRepository.insertBook(book);
+        assertThat(bookRepository.retrieve(book.getId()))
+                .usingRecursiveComparison()
+                .isEqualTo(book);
+    }
+
+    @Test
     void shouldListInsertedBooks() {
         Book book = sampleBook();
         bookRepository.insertBook(book);
