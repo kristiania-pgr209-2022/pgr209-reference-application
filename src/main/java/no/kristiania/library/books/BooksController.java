@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class BooksController {
-
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
@@ -27,7 +26,11 @@ public class BooksController {
     @ContentBody
     public String getBooks() {
         String books = bookRepository.streamBooks()
-                .map(b -> "<li>" + b.getTitle() + " by " + b.getAuthor() + "</li>")
+                .map(b -> """
+                        <li>
+                            <a href="/books/book.html?id=%s">%s</a> by %s
+                        </li>
+                        """.formatted(b.getId(), b.getTitle(), b.getAuthor()))
                 .collect(Collectors.joining("\n"));
         return "<ul class='bookList'>" + books + "</ul>";
     }

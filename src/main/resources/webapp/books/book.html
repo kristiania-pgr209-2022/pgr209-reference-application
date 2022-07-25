@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Books | Kristiania Library</title>
+</head>
+<body>
+<header>Books</header>
+<h2>Existing book</h2>
+<div id="book"></div>
+</body>
+<script>
+    fetch("/api/books/book" + location.search).then(res => res.text()).then(html => {
+        document.getElementById("book").innerHTML = html;
+    });
+</script>
+</html>

@@ -16,6 +16,7 @@ public class BookRepository {
     public Stream<Book> streamBooks() {
         return table.query().stream(row -> {
             Book book = new Book();
+            book.setId(row.getLong("id"));
             book.setTitle(row.getString("title"));
             book.setAuthor(row.getString("author"));
             return book;
