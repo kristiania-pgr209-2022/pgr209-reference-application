@@ -41,13 +41,23 @@ public class BooksController {
     public String getBook(@RequestParam("id") long bookId, @RequestParam("action") Optional<String> action) {
         Book book = bookRepository.retrieve(bookId);
         if (action.filter(s -> s.equals("edit")).isPresent()) {
+            String authorOptions = authorRepository.streamAll()
+                    .map(a -> "<option value='%d'>%s</option>".formatted(a.getId(), a.getFullName()))
+                    .collect(Collectors.joining("\n"));
             return ("""
                 <h2>Edit %s</h2>
                 <form method='POST' action='/api/books/%d'>
                     <div><input name="title" value="%s" />
                     <div><button>Submit</button></div>
                 </form>
-                """).formatted(book.getTitle(), book.getId(), book.getTitle());
+                
+                <h3>Add author</h3>
+                
+                <form method="POST" action="/api/books/%d/authors">
+                    <select name="authorId">%s</select>
+                    <button>Submit</button>
+                </form>
+                """).formatted(book.getTitle(), book.getId(), book.getTitle(), book.getId(), authorOptions);
         }
         return ("""
                 <h2>%s</h2>
@@ -93,5 +103,11 @@ public class BooksController {
         Book book = bookRepository.retrieve(id);
         book.setTitle(title);
         bookRepository.insertBook(book);
+    }
+
+    @POST("/books/{bookId}/authors")
+    @SendRedirect("/books/")
+    public void addBookAuthor(@PathParam("bookId") long id, @RequestParam("authorId") Long authorId)  {
+        bookRepository.addBookAuthor(id, authorId);
     }
 }

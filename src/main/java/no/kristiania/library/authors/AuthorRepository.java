@@ -36,4 +36,10 @@ public class AuthorRepository {
     public Author retrieve(Long id) {
         return table.query().where("id", id).singleObject(this::mapToAuthor).orElseThrow();
     }
+
+    public Stream<Author> listByBook(long bookId) {
+        return table.query()
+                .whereExpression("id in (select author_id from authorships where book_id = ?)", bookId)
+                .stream(this::mapToAuthor);
+    }
 }

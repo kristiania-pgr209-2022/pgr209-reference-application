@@ -15,10 +15,14 @@ class BooksControllerTest {
 
     private final BooksController controller;
     private final DbContext dbContext;
+    private final AuthorRepository authorRepository;
+    private final BookRepository repository;
 
     BooksControllerTest(@TestDbContext DbContext dbContext) {
         controller = new BooksController(dbContext);
         this.dbContext = dbContext;
+        authorRepository = new AuthorRepository(this.dbContext);
+        repository = new BookRepository(this.dbContext);
     }
 
     @Test
@@ -32,7 +36,6 @@ class BooksControllerTest {
     @Test
     public void shouldUpdateBookTitle() {
         Book book = BookRepositoryTest.sampleBook();
-        BookRepository repository = new BookRepository(dbContext);
         repository.insertBook(book);
         controller.updateBook(book.getId(), "Updated title");
         assertThat(controller.getBook(book.getId(), Optional.empty()))
@@ -49,7 +52,6 @@ class BooksControllerTest {
 
     @Test
     void shouldUseExistingAuthorInformation() {
-        AuthorRepository authorRepository = new AuthorRepository(dbContext);
         Author author = new Author();
         author.setFullName("Test Persson");
         authorRepository.save(author);
@@ -58,5 +60,20 @@ class BooksControllerTest {
         controller.addBook(bookTitle, Optional.of(author.getId()), Optional.empty());
         assertThat(controller.getBooks())
                 .contains(bookTitle + "</a> by " + author.getFullName());
+    }
+
+    @Test
+    void shouldAddNewAuthorToBook() {
+        Book book = BookRepositoryTest.sampleBook();
+        repository.insertBook(book);
+
+        Author author = new Author();
+        author.setFullName("Test Author");
+        authorRepository.save(author);
+
+        controller.addBookAuthor(book.getId(), author.getId());
+        assertThat(authorRepository.listByBook(book.getId()))
+                .extracting(Author::getFullName)
+                .containsOnly(book.getAuthor(), author.getFullName());
     }
 }
