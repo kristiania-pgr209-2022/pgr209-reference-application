@@ -4,6 +4,7 @@ import no.kristiania.library.authors.Author;
 import no.kristiania.library.authors.AuthorRepository;
 import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
+import org.fluentjdbc.DbContextJoinedSelectBuilder;
 import org.fluentjdbc.DbContextTable;
 import org.fluentjdbc.DbContextTableAlias;
 
@@ -17,12 +18,17 @@ public class BookRepository {
 
     private final DbContextTable table;
     private final DbContextTable authorshipTable;
-    private final DbContextTable authorsTable;
+    private final DbContextTableAlias bookAlias;
+    private final DbContextTableAlias authorshipAlias;
+    private final DbContextTableAlias authorAlias;
 
     public BookRepository(DbContext dbContext) {
         table = dbContext.tableWithTimestamps("books");
         authorshipTable = dbContext.table("authorships");
-        authorsTable = dbContext.table("authors");
+        DbContextTable authorsTable = dbContext.table("authors");
+        bookAlias = table.alias("b");
+        authorshipAlias = authorshipTable.alias("ab");
+        authorAlias = authorsTable.alias("a");
     }
 
     public void insertBook(Book book) {
@@ -40,21 +46,7 @@ public class BookRepository {
     }
 
     public Collection<BookAggregate> listBooks() {
-        Map<String, BookAggregate> results = new HashMap<>();
-        DbContextTableAlias b = table.alias("b");
-        DbContextTableAlias ab = authorshipTable.alias("ab");
-        DbContextTableAlias a = authorsTable.alias("a");
-        b.join(b.column("id"), ab.column("book_id"))
-                .join(ab.column("author_id"), a.column("id"))
-                .query()
-                .forEach(row -> {
-                    String bookId = row.table(b).getString("id");
-                    if (!results.containsKey(bookId)) {
-                        results.put(bookId, new BookAggregate(mapToBook(row.table(b))));
-                    }
-                    results.get(bookId).addAuthor(AuthorRepository.mapToAuthor(row.table(a)));
-                });
-        return results.values();
+        return listAggregates(aggregateQuery()).values();
     }
 
     public Book retrieve(long bookId) {
@@ -73,5 +65,28 @@ public class BookRepository {
     public Optional<Book> findByTitle(String title) {
         return table.where("title", title)
                 .singleObject(this::mapToBook);
+    }
+
+    public BookAggregate retrieveAggregate(long bookId) {
+        var books = listAggregates(aggregateQuery().where(bookAlias.column("id"), bookId));
+        return books.get(bookId);
+    }
+
+    private Map<Long, BookAggregate> listAggregates(DbContextJoinedSelectBuilder aggregateQuery) {
+        Map<Long, BookAggregate> results = new HashMap<>();
+        aggregateQuery.forEach(row -> {
+            Long bookId = row.table(bookAlias).getLong("id");
+            if (!results.containsKey(bookId)) {
+                results.put(bookId, new BookAggregate(mapToBook(row.table(bookAlias))));
+            }
+            results.get(bookId).addAuthor(AuthorRepository.mapToAuthor(row.table(authorAlias)));
+        });
+        return results;
+    }
+
+    private DbContextJoinedSelectBuilder aggregateQuery() {
+        return bookAlias.join(bookAlias.column("id"), authorshipAlias.column("book_id"))
+                .join(authorshipAlias.column("author_id"), authorAlias.column("id"))
+                .query();
     }
 }

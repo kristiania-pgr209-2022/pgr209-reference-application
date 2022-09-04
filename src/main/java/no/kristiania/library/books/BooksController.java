@@ -40,7 +40,7 @@ public class BooksController {
     @GET("/books/book")
     @ContentBody
     public String getBook(@RequestParam("id") long bookId, @RequestParam("action") Optional<String> action) {
-        Book book = bookRepository.retrieve(bookId);
+        var book = bookRepository.retrieveAggregate(bookId);
         if (action.filter(s -> s.equals("edit")).isPresent()) {
             String authorOptions = authorRepository.streamAll()
                     .map(a -> "<option value='%d'>%s</option>".formatted(a.getId(), a.getFullName()))
@@ -58,13 +58,13 @@ public class BooksController {
                     <select name="authorId">%s</select>
                     <button>Submit</button>
                 </form>
-                """).formatted(book.getTitle(), book.getId(), book.getTitle(), book.getId(), authorOptions);
+                """).formatted(book.getBook().getTitle(), book.getBook().getId(), book.getBook().getTitle(), book.getBook().getId(), authorOptions);
         }
         return ("""
                 <h2>%s</h2>
                 <div>by %s</div>
                 <div><a href='/books/book.html?id=%d&action=edit'>Edit</a></div>
-                """).formatted(book.getTitle(), book.getId(), book.getId());
+                """).formatted(book.getBook().getTitle(), book.getAuthors(), book.getBook().getId());
     }
 
     @POST("/books")
