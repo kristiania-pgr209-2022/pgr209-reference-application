@@ -48,11 +48,11 @@ public class BookRepository {
                 .join(ab.column("author_id"), a.column("id"))
                 .query()
                 .forEach(row -> {
-                    String id = row.table(a).getString("id");
-                    if (!results.containsKey(id)) {
-                        results.put(id, new BookAggregate(mapToBook(row.table(b))));
+                    String bookId = row.table(b).getString("id");
+                    if (!results.containsKey(bookId)) {
+                        results.put(bookId, new BookAggregate(mapToBook(row.table(b))));
                     }
-                    results.get(id).addAuthor(AuthorRepository.mapToAuthor(row.table(a)));
+                    results.get(bookId).addAuthor(AuthorRepository.mapToAuthor(row.table(a)));
                 });
         return results.values();
     }
