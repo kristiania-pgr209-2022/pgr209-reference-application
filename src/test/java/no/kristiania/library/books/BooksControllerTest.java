@@ -35,10 +35,12 @@ class BooksControllerTest {
 
     @Test
     public void shouldUpdateBookTitle() {
-        Book book = BookRepositoryTest.sampleBook();
-        repository.insertBook(book);
-        controller.updateBook(book.getId(), "Updated title");
-        assertThat(controller.getBook(book.getId(), Optional.empty()))
+        String oldTitle = "Old title " + Math.random()*10000;
+        controller.addBook(oldTitle, Optional.empty(), Optional.of("Author Name"));
+        long bookId = repository.findByTitle(oldTitle).orElseThrow().getId();
+
+        controller.updateBook(bookId, "Updated title");
+        assertThat(controller.getBook(bookId, Optional.empty()))
                 .contains(">Updated title<");
     }
 
@@ -64,16 +66,19 @@ class BooksControllerTest {
 
     @Test
     void shouldAddNewAuthorToBook() {
-        Book book = BookRepositoryTest.sampleBook();
-        repository.insertBook(book);
+        String title = "Unique title " + (Math.random()*10000);
+        String firstAuthor = "First Author";
+        controller.addBook(title, Optional.empty(), Optional.of(firstAuthor));
+
+        long bookId = repository.findByTitle(title).orElseThrow().getId();
 
         Author author = new Author();
         author.setFullName("Test Author");
         authorRepository.save(author);
 
-        controller.addBookAuthor(book.getId(), author.getId());
-        assertThat(authorRepository.listByBook(book.getId()))
+        controller.addBookAuthor(bookId, author.getId());
+        assertThat(authorRepository.listByBook(bookId))
                 .extracting(Author::getFullName)
-                .containsOnly(book.getAuthor(), author.getFullName());
+                .containsExactlyInAnyOrder(firstAuthor, author.getFullName());
     }
 }

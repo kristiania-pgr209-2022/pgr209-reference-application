@@ -2,7 +2,6 @@ package no.kristiania.library.books;
 
 public class Book {
     private String title;
-    private String author;
     private Long id;
 
     public void setTitle(String title) {
@@ -11,14 +10,6 @@ public class Book {
 
     public String getTitle() {
         return title;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getAuthor() {
-        return author;
     }
 
     public void setId(Long id) {

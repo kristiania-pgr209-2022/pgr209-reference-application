@@ -23,10 +23,10 @@ public class AuthorRepository {
     }
 
     public Stream<Author> streamAll() {
-        return table.query().stream(this::mapToAuthor);
+        return table.query().stream(AuthorRepository::mapToAuthor);
     }
 
-    private Author mapToAuthor(DatabaseRow row) throws SQLException {
+    public static Author mapToAuthor(DatabaseRow row) throws SQLException {
         Author author = new Author();
         author.setId(row.getLong("id"));
         author.setFullName(row.getString("full_name"));
@@ -34,12 +34,12 @@ public class AuthorRepository {
     }
 
     public Author retrieve(Long id) {
-        return table.query().where("id", id).singleObject(this::mapToAuthor).orElseThrow();
+        return table.query().where("id", id).singleObject(AuthorRepository::mapToAuthor).orElseThrow();
     }
 
     public Stream<Author> listByBook(long bookId) {
         return table.query()
                 .whereExpression("id in (select author_id from authorships where book_id = ?)", bookId)
-                .stream(this::mapToAuthor);
+                .stream(AuthorRepository::mapToAuthor);
     }
 }

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AuthorRepositoryTest {
+public class AuthorRepositoryTest {
     private final AuthorRepository repository;
 
     AuthorRepositoryTest(@TestDbContext DbContext dbContext) {
@@ -32,7 +32,7 @@ class AuthorRepositoryTest {
                 .contains(author.getFullName());
     }
 
-    private Author sampleAuthor() {
+    public static Author sampleAuthor() {
         Author author = new Author();
         author.setFullName("Test Persson");
         return author;

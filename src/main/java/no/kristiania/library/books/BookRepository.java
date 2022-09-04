@@ -5,46 +5,56 @@ import no.kristiania.library.authors.AuthorRepository;
 import org.fluentjdbc.DatabaseRow;
 import org.fluentjdbc.DbContext;
 import org.fluentjdbc.DbContextTable;
+import org.fluentjdbc.DbContextTableAlias;
 
 import java.sql.SQLException;
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class BookRepository {
 
     private final DbContextTable table;
     private final DbContextTable authorshipTable;
-    private final AuthorRepository authorRepository;
+    private final DbContextTable authorsTable;
 
     public BookRepository(DbContext dbContext) {
         table = dbContext.tableWithTimestamps("books");
         authorshipTable = dbContext.table("authorships");
-        authorRepository = new AuthorRepository(dbContext);
+        authorsTable = dbContext.table("authors");
     }
 
     public void insertBook(Book book) {
         var status = table.newSaveBuilder("id", book.getId())
                 .setField("title", book.getTitle())
-                .setField("author", book.getAuthor())
                 .execute();
         book.setId(status.getId());
-
-        Author author = new Author();
-        author.setFullName(book.getAuthor());
-        authorRepository.save(author);
-
-        addBookAuthor(book.getId(), author.getId());
     }
 
     private Book mapToBook(DatabaseRow row) throws SQLException {
         Book book = new Book();
         book.setId(row.getLong("id"));
         book.setTitle(row.getString("title"));
-        book.setAuthor(row.getString("author"));
         return book;
     }
 
-    public Stream<Book> streamBooks() {
-        return table.query().stream(this::mapToBook);
+    public Collection<BookAggregate> listBooks() {
+        Map<String, BookAggregate> results = new HashMap<>();
+        DbContextTableAlias b = table.alias("b");
+        DbContextTableAlias ab = authorshipTable.alias("ab");
+        DbContextTableAlias a = authorsTable.alias("a");
+        b.join(b.column("id"), ab.column("book_id"))
+                .join(ab.column("author_id"), a.column("id"))
+                .query()
+                .forEach(row -> {
+                    String id = row.table(a).getString("id");
+                    if (!results.containsKey(id)) {
+                        results.put(id, new BookAggregate(mapToBook(row.table(b))));
+                    }
+                    results.get(id).addAuthor(AuthorRepository.mapToAuthor(row.table(a)));
+                });
+        return results.values();
     }
 
     public Book retrieve(long bookId) {
@@ -53,10 +63,15 @@ public class BookRepository {
                 .orElseThrow();
     }
 
-    public void addBookAuthor(long id, long authorId) {
+    public void addBookAuthor(Book book, Author author) {
         authorshipTable.insert()
-                .setField("book_id", id)
-                .setField("author_id", authorId)
+                .setField("book_id", book.getId())
+                .setField("author_id", author.getId())
                 .execute();
+    }
+
+    public Optional<Book> findByTitle(String title) {
+        return table.where("title", title)
+                .singleObject(this::mapToBook);
     }
 }

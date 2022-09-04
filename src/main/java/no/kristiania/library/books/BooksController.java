@@ -26,12 +26,13 @@ public class BooksController {
     @GET("/books")
     @ContentBody
     public String getBooks() {
-        String books = bookRepository.streamBooks()
+        String books = bookRepository.listBooks()
+                .stream()
                 .map(b -> """
                         <li>
                             <a href="/books/book.html?id=%s">%s</a> by %s
                         </li>
-                        """.formatted(b.getId(), b.getTitle(), b.getAuthor()))
+                        """.formatted(b.getBook().getId(), b.getBook().getTitle(), b.getAuthors()))
                 .collect(Collectors.joining("\n"));
         return "<ul class='bookList'>" + books + "</ul>";
     }
@@ -63,7 +64,7 @@ public class BooksController {
                 <h2>%s</h2>
                 <div>by %s</div>
                 <div><a href='/books/book.html?id=%d&action=edit'>Edit</a></div>
-                """).formatted(book.getTitle(), book.getAuthor(), book.getId());
+                """).formatted(book.getTitle(), book.getId(), book.getId());
     }
 
     @POST("/books")
@@ -77,8 +78,8 @@ public class BooksController {
 
         Book book = new Book();
         book.setTitle(title);
-        book.setAuthor(author.getFullName());
         bookRepository.insertBook(book);
+        bookRepository.addBookAuthor(book, author);
     }
 
     private Author getAuthor(Optional<Long> authorId, Optional<String> authorName) {
@@ -108,6 +109,9 @@ public class BooksController {
     @POST("/books/{bookId}/authors")
     @SendRedirect("/books/")
     public void addBookAuthor(@PathParam("bookId") long id, @RequestParam("authorId") Long authorId)  {
-        bookRepository.addBookAuthor(id, authorId);
+        bookRepository.addBookAuthor(
+                bookRepository.retrieve(id),
+                authorRepository.retrieve(authorId)
+        );
     }
 }
